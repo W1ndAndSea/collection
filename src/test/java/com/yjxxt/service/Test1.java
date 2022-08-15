@@ -31,4 +31,24 @@ public class Test1 {
         userService.login("xwp", "123456");
     }
 
+    @Test
+    public void update() {
+        System.out.println("这是之前的----");
+        userService.showUser();
+        System.out.println("这是之后的-----");
+        userService.updateUser(new User(1, "xwp", "123456", "aaa", "", ""));
+        userService.showUser();
+
+    }
+
+    @Test
+    public void delete() {
+        System.out.println("这是删除之前哦！");
+        userService.showUser();
+        System.out.println("这是删除之后哦！");
+        userService.delUser(2);
+        userService.showUser();
+
+    }
+
 }

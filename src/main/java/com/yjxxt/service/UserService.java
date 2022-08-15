@@ -3,10 +3,7 @@ package com.yjxxt.service;
 import com.yjxxt.pojo.User;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 /**
  * 云日记-用户管理模块
@@ -28,7 +25,7 @@ public class UserService {
     public UserService() {
         users = new ArrayList<User>();
         users.add(new User(1, "admin", "123456", "admin", "", ""));
-        users.add(new User(2, "xwp", "123456", "xwp", "", ""));
+        users.add(new User(2, "test", "123456", "test", "", ""));
     }
 
     public void addUser(User user) {
@@ -119,25 +116,118 @@ public class UserService {
 
         //根据用户名查找密码
 
-        Integer index=null;
+        Integer index = null;
         for (int i = 0; i < users.size(); i++) {
-            if (users.get(i).getUserName().equals(userName)){
-                index=i;
+            if (users.get(i).getUserName().equals(userName)) {
+                index = i;
                 break;
             }
         }
-        if (index==null){
-            throw  new RuntimeException("用户记录不存在~");
+        if (index == null) {
+            throw new RuntimeException("用户记录不存在~");
         }
-        User temp=users.get(index);
-        if (!temp.getUserPwd().equals(userPwd)){
-            throw  new RuntimeException("用户密码错误~");
+        User temp = users.get(index);
+        if (!temp.getUserPwd().equals(userPwd)) {
+            throw new RuntimeException("用户密码错误~");
         }
         System.out.println("登录成功了哦");
+    }
 
+    public void updateUser(User user) {
+        /**
+         * 1.校验
+         *    用户名 密码 昵称 非空
+         * 2.根据id 查询用户记录是否存在
+         *    不存在->抛异常(更新记录不存在)
+         * 3.记录存在，判断用户名 昵称是否出现重复
+         *      用户名唯一校验
+         *      昵称唯一校验
+         * 4.执行更新 判断结果
+         */
+        if (StringUtils.isBlank(user.getUserName())) {
+            throw new RuntimeException("用户名不能为空");
+        }
+        if (StringUtils.isBlank(user.getUserPwd())) {
+            throw new RuntimeException("密码不能为空哦~");
+        }
+        if (StringUtils.isBlank(user.getNickName())) {
+            throw new RuntimeException("昵称不能为空哦~");
+        }
+        if (user.getId() == null || null == findUserByUserId(user.getId())) {
+            throw new RuntimeException("待更新的数据不存在哦~");
+        }
+
+        /**
+         /* 用户名改动
+         *   改动前:test
+         *   改动后:
+         *      abc  count=0
+         *      test  count=1
+         *      admin  count=1
+         */
+        long count = users.stream()
+                .filter(u -> u.getUserName().equals(user.getUserName()))
+                .filter(u -> !(u.getId().equals(user.getId())))
+                .count();
+
+        if (count == 1) {
+            throw new RuntimeException("用户名已存在哦~");
+        }
+        count = users.stream()
+                .filter(u -> u.getNickName().equals(user.getNickName()))
+                .filter(u -> !(u.getId().equals(user.getId())))
+                .count();
+        if (count == 1) {
+            throw new RuntimeException("用户昵称已存在~");
+        }
+        //执行更新
+        users.set(users.indexOf(findUserByUserId(user.getId())), user);
 
 
     }
 
+    private User findUserByUserId(Integer id) {
+//        Integer index = null;
+//        for (int i = 0; i < users.size(); i++) {
+//            if (users.get(i).getId().equals(id)) {
+//                index = i;
+//                break;
+//            }
+//
+//        }
+//        return index == null ? null : users.get(index);
+//    }
+
+        //第二种
+//        User result = null;
+//        for (int i = 0; i < users.size(); i++) {
+//            if (users.get(i).getId().equals(id)) {
+//            result=users.get(i);
+//            break;
+//
+//            }
+//        }
+//        return  result;
+//    }
+        Optional<User> optionalUser = users.stream()
+                .filter(u -> u.getId().equals(id))
+                .findFirst();
+        return optionalUser.isPresent() ? optionalUser.get() : null;
+
+    }
+
+    public void delUser(Integer id) {
+        /**
+         * id唯一 用户名唯一  昵称唯一
+         * 1.确定记录存在性
+         *    不存在--->抛异常
+         * 2.存在 执行删除
+         */
+        User result = findUserByUserId(id);
+        if (result == null) {
+            throw new RuntimeException("你要删除的记录不存在哦~");
+        }
+        users.remove(result);
+    }
 
 }
