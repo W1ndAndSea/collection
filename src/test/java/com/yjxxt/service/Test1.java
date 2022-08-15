@@ -10,20 +10,25 @@ public class Test1 {
 
     @Before
     public void init() {
-        System.out.println("方法执行前执行");
+//        System.out.println("方法执行前执行");
         userService = new UserService();
     }
 
     @Test
     public void addUser() {
-        userService.addUser(new User(3, "xiaoweipeng", "123456", "xwp", "", ""));
-
+        userService.addUser(new User(5, "xwp", "123456", "xwp", "", ""));
+        userService.showUser();
 
     }
 
     @Test
     public void showUser() {
         userService.showUser();
+    }
+
+    @Test
+    public void login() {
+        userService.login("xwp", "123456");
     }
 
 }
