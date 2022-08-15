@@ -31,16 +31,16 @@ public class UserService {
         users.add(new User(2, "xwp", "123456", "xwp", "", ""));
     }
 
-    public void addUsers(User user) {
+    public void addUser(User user) {
         //先进行参数合法性的校验
 
         if (null == user) {
             throw new RuntimeException("请传入用户");
         }
-        if (StringUtils.isNotBlank(user.getUserName())) {
+        if (StringUtils.isBlank(user.getUserName())) {
             throw new RuntimeException("用户名不能为空哦");
         }
-        if (StringUtils.isNotBlank(user.getUserPwd())) {
+        if (StringUtils.isBlank(user.getUserPwd())) {
             throw new RuntimeException("密码不能为空哦");
         }
 

@@ -16,7 +16,7 @@ public class Test1 {
 
     @Test
     public void addUser() {
-        userService.addUsers(new User(3, "xiaoweipeng", "123456", "xwp", "", ""));
+        userService.addUser(new User(3, "xiaoweipeng", "123456", "xwp", "", ""));
 
 
     }
